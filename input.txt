@@ -1,0 +1,7 @@
+Main_Menu:Login,News,Admin
+
+Login:Pay_Stubs,Paid_Time_off,Request_Leave
+
+Admin:Payroll,Add_User,Schedule_Maker
+
+Payroll:Dollars,Cents,Checks

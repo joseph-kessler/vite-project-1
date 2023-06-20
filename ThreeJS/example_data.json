@@ -1,0 +1,33 @@
+{
+"login":{
+  "name": "Login",
+  "type": "root",
+  "children":["main_menu"],
+  "info": "This module is used to allow a user to login and display the correct modules for their user setting"
+},
+"main_menu":{
+    "name": "Main Menu",
+    "type": "assistant",
+    "children":["company_feed", "my_jobs", "edit_profile"],
+    "info": "This assistant displays options for a logged in user"
+},
+"company_feed":{
+  "name": "Company Feed",
+  "type": "module",
+  "children":[],
+  "info": "This module displays information from coworkers and corporate"
+},
+"my_jobs":{
+  "name": "My Jobs",
+  "type": "module",
+  "children":[],
+  "info": "User can view their jobs and information about them"
+},
+"edit_profile":{
+  "name": "Edit Profile",
+  "type": "assistant",
+  "children":[],
+  "links":["my_jobs"],
+  "info": "Allows user to make changes to their profile."
+}
+}
