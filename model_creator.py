@@ -139,7 +139,7 @@ def read_json_file(file_path):
 #root_node.print_tree()
 #root_node.insert_to_js_file()
 
-file_path = 'example_data.json'
+file_path = './ThreeJS/example_data.json'
 data = read_json_file(file_path)
 
 main_menu_info = data['main_menu']

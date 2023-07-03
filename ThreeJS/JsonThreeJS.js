@@ -1,8 +1,9 @@
 import * as THREE from 'three';
-import "./Styles/style.css"
+import "../Styles/style.css"
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { FlyControls } from 'three/addons/controls/FlyControls.js';
 import gsap from 'gsap'
+import rootNode from './NodeClass'
 
 //Scene
 const scene = new THREE.Scene()
@@ -14,7 +15,7 @@ const material = new THREE.MeshStandardMaterial({
 })
 const material3 = new THREE.MeshBasicMaterial({ color: 0xD3D3D3, side: THREE.DoubleSide, opacity: 0.5, });
 const active_material = new THREE.MeshBasicMaterial({ color: 0xffadad })
-const texture = new THREE.TextureLoader().load("textures/water.jpg");
+const texture = new THREE.TextureLoader().load("../navy_grid_back.jpg");
 texture.wrapS = THREE.RepeatWrapping;
 texture.wrapT = THREE.RepeatWrapping;
 texture.repeat.set(4, 4);
@@ -84,40 +85,54 @@ const tl = gsap.timeline({ defaults: { duration: 1 } })
 tl.fromTo('nav', { y: '-100%' }, { y: '0%' })
 tl.fromTo('.title', { opacity: 0 }, { opacity: 1 })
 
-//Raycaster
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
-function onPointermove(event) {
+let selectedArray = []
+function IntersectionCheck(event) {
 	// calculate pointer position in normalized device coordinates
 	// (-1 to +1) for both components
 	pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
 	pointer.y = - (event.clientY / window.innerHeight) * 2 + 1;
 	raycaster.setFromCamera(pointer, camera);
 	const intersects = raycaster.intersectObjects(scene.children);
-
 	var divElement = document.getElementById('dynamic');
-	// Hide the div
-
 
 	if (intersects.length > 0) {
-		if (intersects[0].object.material == material) {
-			// Unhide the div
-			divElement.style.display = 'block';
-			intersects[0].object.material = active_material;
-		}
+		divElement.style.display = 'block';
+		intersects[0].object.material = active_material;
+
 	}
 	if (intersects.length <= 0) {
 		divElement.style.display = 'none';
 		scene.traverse((object) => {
 			if (object.isMesh && object.material === active_material) {
-				object.material = material;
+				resetMesh(object,rootNode);
 			}
 		});
 	}
 }
-window.addEventListener('pointermove', onPointermove);
+
+window.addEventListener('pointermove', IntersectionCheck);
 //window.requestAnimationFrame(render);
 
-
-
+function addMeshToScene(parentNode) {
+	scene.add(parentNode.getMesh());
+	for (const child of parentNode.children) {
+		addMeshToScene(child,rootNode);
+	}
+}
+function resetMesh(object,parentNode)
+{
+	if(parentNode.id === object.name)
+	{
+		object.material = parentNode.getMaterial();
+	}
+	else {
+	for (const child of parentNode.children)
+	{
+		resetMesh(object,child)
+	}
+}
+}
 // Generated Tree Begins Here
+addMeshToScene(rootNode);

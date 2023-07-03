@@ -57,4 +57,5 @@ nav ul {
     border-radius: 10px;
     width: 25%;
     color: white;
+    z-index: 3;
 }
