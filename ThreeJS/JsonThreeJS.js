@@ -9,11 +9,7 @@ import rootNode from './NodeClass'
 const scene = new THREE.Scene()
 
 //Create Textures
-const material = new THREE.MeshStandardMaterial({
-	color: "#3f7b9d",
-	roughness: 0.5,
-})
-const material3 = new THREE.MeshBasicMaterial({ color: 0xD3D3D3, side: THREE.DoubleSide, opacity: 0.5, });
+
 const active_material = new THREE.MeshBasicMaterial({ color: 0xffadad })
 const texture = new THREE.TextureLoader().load("../navy_grid_back.jpg");
 texture.wrapS = THREE.RepeatWrapping;
@@ -51,8 +47,8 @@ renderer.render(scene, camera)
 //Controls
 const controls = new OrbitControls(camera, canvas)
 controls.enableDamping = true
-controls.enablePan = false
-controls.enableZoom = false
+controls.enablePan = true
+controls.enableZoom = true
 controls.autoRotate = false
 controls.autoRotateSpeed = 0
 
@@ -87,7 +83,7 @@ tl.fromTo('.title', { opacity: 0 }, { opacity: 1 })
 
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
-let selectedArray = []
+
 function IntersectionCheck(event) {
 	// calculate pointer position in normalized device coordinates
 	// (-1 to +1) for both components
@@ -97,7 +93,7 @@ function IntersectionCheck(event) {
 	const intersects = raycaster.intersectObjects(scene.children);
 	var divElement = document.getElementById('dynamic');
 
-	if (intersects.length > 0) {
+	if (intersects.length > 0 && intersects[0].object.geometry.type != 'BufferGeometry') {
 		divElement.style.display = 'block';
 		intersects[0].object.material = active_material;
 
@@ -117,8 +113,21 @@ window.addEventListener('pointermove', IntersectionCheck);
 
 function addMeshToScene(parentNode) {
 	scene.add(parentNode.getMesh());
+	console.log(parentNode.getMesh())
 	for (const child of parentNode.children) {
 		addMeshToScene(child,rootNode);
+	}
+}
+function addConnectionsToScene(parentNode) {
+	let connectionArray = parentNode.getConnectionMesh()
+	//scene.add(parentNode.getConnectionMesh());
+	for (const connection of connectionArray)
+	{
+		console.log(connection)
+		scene.add(connection);
+	}
+	for (const child of parentNode.children) {
+		addConnectionsToScene(child);
 	}
 }
 function resetMesh(object,parentNode)
@@ -136,3 +145,4 @@ function resetMesh(object,parentNode)
 }
 // Generated Tree Begins Here
 addMeshToScene(rootNode);
+addConnectionsToScene(rootNode);
